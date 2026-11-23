@@ -1,0 +1,45 @@
+name: Jisr al-Shughur 3D Bedrock
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
+
+      - name: Clone Arnis
+        run: git clone --depth 1 https://github.com/louis-e/arnis.git
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Arnis CLI
+        working-directory: arnis
+        run: cargo build --release --no-default-features
+
+      - name: Generate Jisr al-Shughur 3D (.mcworld)
+        working-directory: arnis
+        run: |
+          mkdir -p output
+          HELP=$(./target/release/arnis --help)
+          if echo "$HELP" | grep -iqE "min_lng,min_lat|lng,lat|lon,lat"; then
+            BBOX="36.305,35.802,36.332,35.826"
+          else
+            BBOX="35.802,36.305,35.826,36.332"
+          fi
+          if echo "$HELP" | grep -q -- "--output-dir"; then
+            OUT_FLAG="--output-dir=./output"
+          else
+            OUT_FLAG="--path=./output"
+          fi
+          EXTRA=""
+          echo "$HELP" | grep -q -- "--terrain" && EXTRA="$EXTRA --terrain"
+          ./target/release/arnis --bedrock --bbox="$BBOX" $OUT_FLAG --gamemode creative $EXTRA
+
+      - name: Upload World
+        uses: actions/upload-artifact@v4
+        with:
+          name: jisr-al-shughur-3d
+          path: arnis/output
