@@ -36,7 +36,7 @@ jobs:
           fi
           EXTRA=""
           echo "$HELP" | grep -q -- "--terrain" && EXTRA="$EXTRA --terrain"
-          ./target/release/arnis --bedrock --bbox="$BBOX" $OUT_FLAG --gamemode creative $EXTRA
+          ./target/release/arnis --bedrock --bbox="$BBOX" $OUT_FLAG $EXTRA
 
       - name: Upload World
         uses: actions/upload-artifact@v4
