@@ -10,7 +10,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
 
       - name: Clone Arnis (pinned version)
-        run: git clone --depth 1 --branch v2.9.0 https://github.com/louis-e/arnis.git
+        run: git clone --depth 1 --branch v3.1.0 https://github.com/louis-e/arnis.git
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -25,9 +25,9 @@ jobs:
           mkdir -p output
           HELP=$(./target/release/arnis --help)
           if echo "$HELP" | grep -iqE "min_lng,min_lat|lng,lat|lon,lat"; then
-            BBOX="36.305,35.802,36.332,35.826"
+            BBOX="36.300,35.797,36.337,35.831"
           else
-            BBOX="35.802,36.305,35.826,36.332"
+            BBOX="35.797,36.300,35.831,36.337"
           fi
           if echo "$HELP" | grep -q -- "--output-dir"; then
             OUT_FLAG="--output-dir=./output"
